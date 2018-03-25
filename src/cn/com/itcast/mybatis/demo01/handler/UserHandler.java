@@ -1,5 +1,6 @@
 package cn.com.itcast.mybatis.demo01.handler;
 
+import cn.com.itcast.mybatis.demo01.pojo.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -26,7 +27,16 @@ public class UserHandler {
         //通过会话工厂得到SqlSession
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
+        try{
+            User user = sqlSession.selectOne("test.findUserById",1);
+            System.out.printf(user.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            sqlSession.close();
+        }
         //通过SqlSession操作数据库
-        sqlSession.selectOne()
+
+
     }
 }
