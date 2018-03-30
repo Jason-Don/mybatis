@@ -21,7 +21,7 @@
     <!--加载映射文件-->
     <mappers>
 
-
+        <!--路径不对，造成错误-->
         <!--<mapper resource="sqlMap/"></mapper>-->
         <!--### Error building SqlSession.-->
         <!--### The error may exist in sqlMap/-->

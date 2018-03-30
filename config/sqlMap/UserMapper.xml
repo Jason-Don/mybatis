@@ -6,7 +6,7 @@
 <!-- namespace命名空间，作用就是对sql进行分类化管理，理解sql隔离
 注意：使用mapper代理方法开发，namespace有特殊重要的作用
 -->
-<mapper namespace="test">
+<mapper namespace="user">
 
     <!-- 在 映射文件中配置很多sql语句 -->
     <!-- 需求：通过id查询用户表的记录 -->
@@ -33,6 +33,48 @@
     <select id="findUserByName" parameterType="java.lang.String" resultType="cn.com.itcast.mybatis.demo01.pojo.User">
         select * from user where username like '%${value}%'
     </select>
+
+    <!--
+    parameterType 指定参数类型是一个pojo
+    #{}中指定pojo的属性名，接收pojo对象属性值，mybatis通过OGNL获取对象属性值
+    -->
+    <insert id="insertUser" parameterType="cn.com.itcast.mybatis.demo01.pojo.User">
+        <!--主键自增
+        将插入数据主键返回，返回到User对象中
+        select LAST_INSERT_ID();得到刚insert进去记录的主键值，只适用与自增主键。
+        keyProperty: 将查询到的主键值设置到parameterType指定对象的属性中。
+        order：select LAST_INSERT_ID();执行顺序，相对于insert语句。
+        -->
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+
+
+        <!--uuid()生产主键
+        执行顺序：
+        1、先通过uuid()生成一个主键；2、将生产的主键设置到User对象中；3、执行jinsert语句
+        -->
+        <!--
+        <selectKey keyProperty="id" order="BEFORE" resultType="java.Long.String">
+            SELECT UUID();
+            //Oralcle中：select 序列名.nextVal();
+
+        </selectKey>
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+        -->
+    </insert>
+
+    <delete id="delUserById" parameterType="int" >
+        DELETE from user where id = #{value}
+    </delete>
+
+    <update id="updateUserById" parameterType="cn.com.itcast.mybatis.demo01.pojo.User" >
+        update user set username=#{username},birthday=#{birthday},sex=#{sex},address=#{address} where id=#{id}
+        <!--<selectKey keyProperty="cn.com.itcast.mybatis.demo01.pojo.User" order="AFTER" resultType="cn.com.itcast.mybatis.demo01.pojo.User">-->
+            <!--select * from user where id=#{id}-->
+        <!--</selectKey>-->
+    </update>
 
 </mapper>
 
