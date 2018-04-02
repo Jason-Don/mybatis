@@ -3,20 +3,60 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <!-- 和spring整合后 environments配置将废除-->
+
+
+    <!-- 加载属性文件 -->
+    <properties resource="db.properties"></properties>
+
+    <!--全局定义-->
+    <!--<settings>-->
+    <!--<setting name="" value=""/>-->
+    <!--</settings>-->
+
+    <!--别名定义-->
+    <typeAliases>
+        <!--单个别名定义-->
+        <!--alias中定义的别名，在mqpper.xml中使用时首字母大小写均可-->
+        <!--<typeAlias type="cn.com.itcast.mybatis.demo01.pojo.User" alias="user" ></typeAlias>-->
+
+        <package name="cn.com.itcast.mybatis.demo01.pojo"></package>
+
+
+    </typeAliases>
+
     <environments default="development">
         <environment id="development">
             <!-- 使用jdbc事务管理-->
-            <transactionManager type="JDBC" />
+            <transactionManager type="JDBC"/>
             <!-- 数据库连接池-->
             <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver" />
-                <property name="url" value="jdbc:mysql://192.168.0.104:3306/studydb?characterEncoding=utf-8" />
-                <property name="username" value="study" />
-                <property name="password" value="study" />
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
             </dataSource>
         </environment>
     </environments>
+
+
+
+
+    <!-- 和spring整合后 environments配置将废除-->
+    <!---->
+    <!--<environments default="development">-->
+    <!--<environment id="development">-->
+    <!--&lt;!&ndash; 使用jdbc事务管理&ndash;&gt;-->
+    <!--<transactionManager type="JDBC" />-->
+    <!--&lt;!&ndash; 数据库连接池&ndash;&gt;-->
+    <!--<dataSource type="POOLED">-->
+    <!--<property name="driver" value="com.mysql.jdbc.Driver" />-->
+    <!--<property name="url" value="jdbc:mysql://192.168.0.104:3306/studydb?characterEncoding=utf-8" />-->
+    <!--<property name="username" value="study" />-->
+    <!--<property name="password" value="study" />-->
+    <!--</dataSource>-->
+    <!--</environment>-->
+    <!--</environments>-->
+
 
     <!--加载映射文件-->
     <mappers>
@@ -29,5 +69,12 @@
 
         <mapper resource="sqlMap/UserMapper.xml"></mapper>
 
+
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+
+
     </mappers>
+
+
+
 </configuration>

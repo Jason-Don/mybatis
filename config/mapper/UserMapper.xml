@@ -9,6 +9,7 @@
 <!--mapper代理的形式
 namespace为mapper地址
 -->
+
 <mapper namespace="cn.com.itcast.mybatis.mapper.UserMapper">
 
     <!-- 在 映射文件中配置很多sql语句 -->
@@ -33,7 +34,7 @@ namespace为mapper地址
     使用${} 易引起sql注入
     ${value}：接收输入参数的内容；如果传入参数类型是简单数据类型，${}中只能使用value；
     -->
-    <select id="findUserByName" parameterType="java.lang.String" resultType="cn.com.itcast.mybatis.demo01.pojo.User">
+    <select id="findUserByName" parameterType="java.lang.String" resultType="User">
         select * from user where username like '%${value}%'
     </select>
 
@@ -79,6 +80,9 @@ namespace为mapper地址
         <!--</selectKey>-->
     </update>
 
+
+
 </mapper>
 
+        <!-- 别名定义 -->
 

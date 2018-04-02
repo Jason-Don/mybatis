@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class UserMapperTest {
 
@@ -28,5 +29,13 @@ public class UserMapperTest {
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         User user = userMapper.findUserById(117);
         System.out.println(user);
+    }
+
+    @Test
+    public void testFindUserName() throws Exception {
+        SqlSession sqlSession=sqlSessionFactory.openSession();
+        UserMapper userMapper=sqlSession.getMapper(UserMapper.class);
+        List<User> userList = userMapper.findUserByName("张");
+        System.out.println(userList);
     }
 }
