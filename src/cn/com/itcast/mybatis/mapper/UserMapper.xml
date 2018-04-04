@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace命名空间，作用就是对sql进行分类化管理，理解sql隔离
+注意：使用mapper代理方法开发，namespace有特殊重要的作用
+-->
+<!--mapper代理的形式
+namespace为mapper地址
+-->
+
+<mapper namespace="cn.com.itcast.mybatis.mapper.UserMapper">
+
+    <!-- 在 映射文件中配置很多sql语句 -->
+    <!-- 需求：通过id查询用户表的记录 -->
+    <!-- 通过 select执行数据库查询
+    id：标识 映射文件中的 sql
+    将sql语句封装到mappedStatement对象中，所以将id称为statement的id
+    parameterType：指定输入 参数的类型，这里指定int型
+    #{}表示一个 占位 符号
+    #{id}：其中的id表示接收输入 的参数，参数名称就是id，如果输入 参数是简单类型，#{}中的参数名可以任意，可以value或其它名称
+
+    resultType：指定sql输出结果 的所映射的java对象类型，select指定resultType表示将单条记录映射成的java对象。
+     -->
+    <select id="findUserById" parameterType="int" resultType="cn.com.itcast.mybatis.demo01.pojo.User">
+        select * from user where id=#{id}
+    </select>
+
+    <!--根据用户名称查询用户信息-->
+    <!--
+    resultType: 指定的是单条记录所映射的java对象
+    ${} 表示 拼接 符,将收到的参数无修饰的拼到sql中
+    使用${} 易引起sql注入
+    ${value}：接收输入参数的内容；如果传入参数类型是简单数据类型，${}中只能使用value；
+    -->
+    <select id="findUserByName" parameterType="java.lang.String" resultType="User">
+        select * from user where username like '%${value}%'
+    </select>
+
+    <!--
+    parameterType 指定参数类型是一个pojo
+    #{}中指定pojo的属性名，接收pojo对象属性值，mybatis通过OGNL获取对象属性值
+    -->
+    <insert id="insertUser" parameterType="cn.com.itcast.mybatis.demo01.pojo.User">
+        <!--主键自增
+        将插入数据主键返回，返回到User对象中
+        select LAST_INSERT_ID();得到刚insert进去记录的主键值，只适用与自增主键。
+        keyProperty: 将查询到的主键值设置到parameterType指定对象的属性中。
+        order：select LAST_INSERT_ID();执行顺序，相对于insert语句。
+        -->
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+
+
+        <!--uuid()生产主键
+        执行顺序：
+        1、先通过uuid()生成一个主键；2、将生产的主键设置到User对象中；3、执行jinsert语句
+        -->
+        <!--
+        <selectKey keyProperty="id" order="BEFORE" resultType="java.Long.String">
+            SELECT UUID();
+            //Oralcle中：select 序列名.nextVal();
+
+        </selectKey>
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+        -->
+    </insert>
+
+    <delete id="delUserById" parameterType="int" >
+        DELETE from user where id = #{value}
+    </delete>
+
+    <update id="updateUserById" parameterType="cn.com.itcast.mybatis.demo01.pojo.User" >
+        update user set username=#{username},birthday=#{birthday},sex=#{sex},address=#{address} where id=#{id}
+        <!--<selectKey keyProperty="cn.com.itcast.mybatis.demo01.pojo.User" order="AFTER" resultType="cn.com.itcast.mybatis.demo01.pojo.User">-->
+            <!--select * from user where id=#{id}-->
+        <!--</selectKey>-->
+    </update>
+
+
+
+
+
+    <!-- 用户信息的综合查询 -->
+    <select id="findUserList" parameterType="cn.com.itcast.mybatis.demo01.pojo.UserQueryVo" resultType="cn.com.itcast.mybatis.demo01.pojo.UserCustom">
+
+        SELECT * from user
+        <!--where 可以自动去掉条件中的第一个and -->
+        <where>
+            <!-- refid: 指定sql片段id
+                若sql片段不再同一个xml文件，前面加上namespace
+            -->
+            <include refid="query_user_where"></include>
+            <!--这里还可以引用其他sql片段-->
+        </where>
+
+    </select>
+
+    <!-- 用户信息数量的综合查询 -->
+    <select id="findUserNum" parameterType="cn.com.itcast.mybatis.demo01.pojo.UserQueryVo" resultType="int">
+
+        SELECT count(1) from user
+        <!--where 可以自动去掉条件中的第一个and -->
+        <where>
+            <!-- refid: 指定sql片段id
+                若sql片段不再同一个xml文件，前面加上namespace
+            -->
+            <include refid="query_user_where"></include>
+            <!--这里还可以引用其他sql片段-->
+        </where>
+    </select>
+
+    <!--定义sql片段
+      id：sql片段唯一标识
+      经验：基于单表定义sql片段，这样的话这个sql片段可重用性较高；
+           在sql片段中不要包含where
+    -->
+    <sql id="query_user_where">
+
+            <if test="userCustom != null and userCustom != '' ">
+                <if test="userCustom.sex != null and userCustom.sex != '' ">
+                    and user.sex= #{userCustom.sex}
+                </if>
+                <if test="userCustom.username != null and userCustom.username != '' ">
+                    and user.username like '%${userCustom.username}%'
+                </if>
+
+                <if test="ids != null ">
+                    <!--使用foreach遍历ids
+                        collection: 指定输入对象集合属性
+                        item：每次遍历生产的对象名
+                        open：开始遍历是拼接串
+                        close：结束遍历需要拼接的串
+                        separator：遍历的两个对象需要拼接的串
+                    -->
+                    <!--<foreach collection="ids" item="userId" open="and (" close=")" separator="or">-->
+                        <!--&lt;!&ndash; 每次遍历需要拼接的串 &ndash;&gt;-->
+                        <!--id = #{userId}-->
+                    <!--</foreach>-->
+
+                    <foreach collection="ids" item="userId" open="and id in(" close=")" separator=",">
+                        <!-- 每次遍历需要拼接的串 -->
+                        #{userId}
+                    </foreach>
+                </if>
+            </if>
+    </sql>
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- 使用resultMap做输出映射
+        resultMap：指定resultMap的id，如果这个resultMap如果在其他mapper.xml中，前面需要加namespace
+    -->
+    <select id="findUserListResulMap" parameterType="cn.com.itcast.mybatis.demo01.pojo.UserQueryVo" resultMap="userResultMap">
+
+        SELECT id id_,username username_ from user where user.sex= #{userCustom.sex} and user.username like '%${userCustom.username}%'
+    </select>
+    <!--
+        type: resultMap最终映射的java对象
+        id: 对resultMap唯一标识
+    -->
+    <resultMap id="userResultMap" type="cn.com.itcast.mybatis.demo01.pojo.User">
+        <!--id表示查询结果集中唯一标识
+        column：查询出来的列名
+        property：指定最终映射Java 对象属性名
+        -->
+        <id column="id_" property="id"></id>
+        <!--result对普通列定义
+            column：查询出来的列名
+            property：指定最终映射Java 对象属性名
+         -->
+        <result column="username_" property="username"></result>
+    </resultMap>
+</mapper>
+

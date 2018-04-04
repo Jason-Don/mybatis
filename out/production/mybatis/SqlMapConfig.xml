@@ -19,6 +19,8 @@
         <!--alias中定义的别名，在mqpper.xml中使用时首字母大小写均可-->
         <!--<typeAlias type="cn.com.itcast.mybatis.demo01.pojo.User" alias="user" ></typeAlias>-->
 
+        <!--批量别名定义-->
+        <!--别名就是类名，首字母大小写都可以-->
         <package name="cn.com.itcast.mybatis.demo01.pojo"></package>
 
 
@@ -67,12 +69,33 @@
         <!--### The error may exist in sqlMap/-->
         <!--### Cause: org.apache.ibatis.builder.BuilderException: Error parsing SQL Mapper Configuration. Cause: org.apache.ibatis.builder.BuilderException: Error creating document instance.  Cause: org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 1; 前言中不允许有内容。-->
 
-        <mapper resource="sqlMap/UserMapper.xml"></mapper>
+        <!--<mapper resource="sqlMap/UserMapper.xml"></mapper>-->
 
 
-        <mapper resource="mapper/UserMapper.xml"></mapper>
+        <!--通过resource方法一次加载一个映射文件-->
+        <!--<mapper resource="mapper/UserMapper.xml"></mapper>-->
 
 
+
+
+        <!--
+            通过mapper接口加载映射文件
+
+         前提：使用mapper代理方法；
+         规范：mapper接口类名和mapper.xml映射文件名称保持一致，且在同一个目录。
+        -->
+        <!--<mapper class="cn.com.itcast.mybatis.mapper.UserMapper" ></mapper>-->
+
+
+
+        <!--
+            批量加载mapper
+            指定mapper接口包名，mybatis自动扫描包下所有mapper接口进行加载
+
+         前提：使用mapper代理方法；
+         规范：mapper接口类名和mapper.xml映射文件名称保持一致，且在同一个目录。
+        -->
+        <package name="cn.com.itcast.mybatis.mapper" ></package>
     </mappers>
 
 
