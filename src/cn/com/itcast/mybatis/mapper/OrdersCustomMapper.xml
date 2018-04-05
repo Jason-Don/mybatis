@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace命名空间，作用就是对sql进行分类化管理，理解sql隔离
+注意：使用mapper代理方法开发，namespace有特殊重要的作用
+-->
+<!--mapper代理的形式
+namespace为mapper地址
+-->
+
+<mapper namespace="cn.com.itcast.mybatis.mapper.OrdersCustomMapper">
+
+    <select id="findOrdersUser" resultType="cn.com.itcast.mybatis.demo01.pojo.OrdersCustom">
+        select t.*,
+        u.username,
+        u.sex,
+        u.address
+        from orders t,user u
+        where t.user_id = u.id
+    </select>
+
+    <select id="findOrdersUserResultMap" resultMap="OrdersUserResultMap">
+        select t.*,
+        u.username,
+        u.sex,
+        u.address
+        from orders t,user u
+        where t.user_id = u.id
+    </select>
+    <resultMap id="OrdersUserResultMap" type="cn.com.itcast.mybatis.demo01.pojo.Orders">
+        <id column="id" property="id"></id>
+        <result column="user_id" property="user_id"></result>
+        <result column="number" property="number"></result>
+        <result column="createtime" property="createtime"></result>
+        <result column="note" property="note"></result>
+        <!--配置映射的关联的用户信息
+        property：将要关联查询的用户信息映射到Orders对象中的哪个属性
+        -->
+        <association property="user" javaType="cn.com.itcast.mybatis.demo01.pojo.User">
+            <!--
+            id: 关联查询用户的唯一标识
+            column：指定唯一标识用户信息的列
+            property：映射到User对象的哪个属性
+            -->
+            <id column="user_id" property="id"></id>
+            <result column="username" property="username"></result>
+            <result column="sex" property="sex"></result>
+            <result column="address" property="address"></result>
+        </association>
+    </resultMap>
+</mapper>
+
