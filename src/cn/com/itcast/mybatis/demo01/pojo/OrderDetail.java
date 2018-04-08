@@ -6,6 +6,27 @@ public class OrderDetail {
     private int items_id;
     private int items_num;
 
+    private Items items;
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "id=" + id +
+                ", orders_id=" + orders_id +
+                ", items_id=" + items_id +
+                ", items_num=" + items_num +
+                ", items=" + items +
+                '}';
+    }
+
+    public Items getItems() {
+        return items;
+    }
+
+    public void setItems(Items items) {
+        this.items = items;
+    }
+
     public int getId() {
         return id;
     }
@@ -38,13 +59,4 @@ public class OrderDetail {
         this.items_num = items_num;
     }
 
-    @Override
-    public String toString() {
-        return "OrderDetail{" +
-                "id=" + id +
-                ", orders_id=" + orders_id +
-                ", items_id=" + items_id +
-                ", items_num=" + items_num +
-                '}';
-    }
 }

@@ -50,5 +50,147 @@ namespace为mapper地址
             <result column="address" property="address"></result>
         </association>
     </resultMap>
+
+
+
+    <!-- 一对多  查询订单及订单明细 开始-->
+    <select id="findOrderAndDetialsRsultMap" resultMap="OrderAndDetialsRsultMap">
+        select t.*,
+        u.username,
+        u.sex,
+        u.address,
+        d.id orderdetail_id,
+        d.orders_id,
+        d.items_id,
+        d.items_num
+        from orders t,user u,orderdetail d
+        where t.user_id = u.id
+        and d.orders_id=t.id
+    </select>
+    <resultMap id="OrderAndDetialsRsultMap" type="cn.com.itcast.mybatis.demo01.pojo.Orders">
+        <!--订单和用户信息 开始-->
+        <id column="id" property="id"></id>
+        <result column="user_id" property="user_id"></result>
+        <result column="number" property="number"></result>
+        <result column="createtime" property="createtime"></result>
+        <result column="note" property="note"></result>
+        <!--配置映射的关联的用户信息
+        property：将要关联查询的用户信息映射到Orders对象中的哪个属性
+        -->
+        <association property="user" javaType="cn.com.itcast.mybatis.demo01.pojo.User">
+            <!--
+            id: 关联查询用户的唯一标识
+            column：指定唯一标识用户信息的列
+            property：映射到User对象的哪个属性
+            -->
+            <id column="user_id" property="id"></id>
+            <result column="username" property="username"></result>
+            <result column="sex" property="sex"></result>
+            <result column="address" property="address"></result>
+        </association>
+        <!--订单和用户信息 结束-->
+
+        <!--订单明细信息 开始-->
+            <!--
+            一订单查询出多条明细，使用collection进行映射。
+            collection：对关联查询到多条记录映射到集合对象中
+            property：将关联查询到多条记录映射到Order是对象的对映的属性中。
+            ofType：指定映射到List集合属性中pojo类型
+            -->
+        <collection property="orderDetails" ofType="cn.com.itcast.mybatis.demo01.pojo.OrderDetail">
+            <!--
+            id：订单明细的唯一标识
+            propert：要将订单的唯一标识映射到cn.com.itcast.mybatis.demo01.pojo.OrderDetail哪个属性
+            -->
+            <id column="orderdetail_id" property="id"></id>
+            <result column="orders_id" property="orders_id"></result>
+            <result column="items_id" property="items_id"></result>
+            <result column="items_num" property="items_num"></result>
+        </collection>
+
+        <!--订单明细信息 结束-->
+    </resultMap>
+    <!--查询订单及订单明细 结束-->
+
+
+
+    <!-- 多对多  查询订单、订单明细及商品明细 开始-->
+    <select id="findUserAndItemsRsultMap" resultMap="UserAndItemsRsultMap">
+        select t.*,
+        u.username,
+        u.sex,
+        u.address,
+        d.id orderdetail_id,
+        d.orders_id,
+        d.items_id,
+        d.items_num,
+        item.name item_name,
+        item.detail item_detail,
+        item.price item_price
+        from orders t,user u,orderdetail d,items item
+        where t.user_id = u.id
+        and d.orders_id=t.id
+        and d.items_id = item.id
+    </select>
+    <resultMap id="UserAndItemsRsultMap" type="cn.com.itcast.mybatis.demo01.pojo.User">
+        <!--用户信息 开始-->
+        <id column="user_id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="sex" property="sex"></result>
+        <result column="address" property="address"></result>
+        <!--用户信息 结束-->
+
+        <!--订单明细信息 开始-->
+        <!--一个用户多个订单，使用collection-->
+        <collection property="ordersList" ofType="cn.com.itcast.mybatis.demo01.pojo.Orders">
+            <id column="id" property="id"></id>
+            <result column="user_id" property="user_id"></result>
+            <result column="number" property="number"></result>
+            <result column="createtime" property="createtime"></result>
+            <result column="note" property="note"></result>
+
+            <!--一个订单多个订单明细，使用collection-->
+            <collection property="orderDetails" ofType="cn.com.itcast.mybatis.demo01.pojo.OrderDetail">
+                <id column="orderdetail_id" property="id"></id>
+                <result column="orders_id" property="orders_id"></result>
+                <result column="items_id" property="items_id"></result>
+                <result column="items_num" property="items_num"></result>
+
+                <!--一个订单明细对映一个商品信息，使用association-->
+                <association property="items" javaType="cn.com.itcast.mybatis.demo01.pojo.Items">
+                    <id column="items_id" property="id"></id>
+                    <result column="item_name" property="name"></result>
+                    <result column="item_detail" property="datail"></result>
+                    <result column="item_price" property="pic"></result>
+                </association>
+            </collection>
+        </collection>
+
+        <!--订单明细信息 结束-->
+    </resultMap>
+    <!--多对多  查询订单、订单明细及商品明细 结束-->
+
+
+
+    <!-- 查询订单关联用户，用户信息需要延迟加载 开始-->
+    <select id="findOrdersUserLazyLoading" resultMap="OrdersUserLazyLoading">
+        SELECT * FROM orders
+    </select>
+
+    <resultMap id="OrdersUserLazyLoading" type="cn.com.itcast.mybatis.demo01.pojo.Orders">
+        <id column="id" property="id"></id>
+        <result column="user_id" property="user_id"></result>
+        <result column="number" property="number"></result>
+        <result column="createtime" property="createtime"></result>
+        <result column="note" property="note"></result>
+
+        <!--
+         select：调用的statimentID
+         column：传递参数名
+         -->
+        <association property="user" javaType="cn.com.itcast.mybatis.demo01.pojo.User" select="cn.com.itcast.mybatis.mapper.UserMapper.findUserById" column="user_id">
+        </association>
+    </resultMap>
+    <!-- 查询订单关联用户，用户信息需要延迟加载    结束-->
 </mapper>
 

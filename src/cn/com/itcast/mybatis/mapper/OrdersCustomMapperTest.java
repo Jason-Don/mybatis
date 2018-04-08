@@ -2,6 +2,7 @@ package cn.com.itcast.mybatis.mapper;
 
 import cn.com.itcast.mybatis.demo01.pojo.Orders;
 import cn.com.itcast.mybatis.demo01.pojo.OrdersCustom;
+import cn.com.itcast.mybatis.demo01.pojo.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -44,6 +45,43 @@ public class OrdersCustomMapperTest {
         sqlSession.close();
 
         System.out.println(ordersList);
+
+    }
+    @Test
+    public void testFindOrderAndDetialsRsultMap() throws Exception {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        OrdersCustomMapper ordersCustomMapper = sqlSession.getMapper(OrdersCustomMapper.class);
+        List<Orders> ordersList = ordersCustomMapper.findOrderAndDetialsRsultMap();
+        sqlSession.close();
+
+        System.out.println(ordersList);
+    }
+
+    @Test
+    public void testFindUserAndItemsRsultMap() throws Exception {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        OrdersCustomMapper ordersCustomMapper = sqlSession.getMapper(OrdersCustomMapper.class);
+        List<User> userList = ordersCustomMapper.findUserAndItemsRsultMap();
+        sqlSession.close();
+
+        System.out.println(userList);
+    }
+
+    @Test
+    public void testFindOrdersUserLazyLoading() throws Exception {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        OrdersCustomMapper ordersCustomMapper = sqlSession.getMapper(OrdersCustomMapper.class);
+
+        //选查询订单信息（单表查询）
+        List<Orders> ordersList = ordersCustomMapper.findOrdersUserLazyLoading();
+
+        //当执行getUser()方法时，去查询用户信息，实现按需加载
+        for(Orders orders : ordersList){
+            System.out.println(orders.getUser());
+
+        }
+
+        sqlSession.close();
 
     }
 }

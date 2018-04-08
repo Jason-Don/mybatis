@@ -9,9 +9,15 @@
     <properties resource="db.properties"></properties>
 
     <!--全局定义-->
-    <!--<settings>-->
-    <!--<setting name="" value=""/>-->
-    <!--</settings>-->
+    <settings>
+        <!--延迟加载开关-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--将积极加载改为消极加载，即按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <!--二级缓存开关，默认开启-->
+        <setting name="cacheEnabled" value="true"></setting>
+    </settings>
 
     <!--别名定义-->
     <typeAliases>

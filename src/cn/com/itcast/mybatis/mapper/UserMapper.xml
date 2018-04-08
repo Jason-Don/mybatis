@@ -12,6 +12,11 @@ namespace为mapper地址
 
 <mapper namespace="cn.com.itcast.mybatis.mapper.UserMapper">
 
+    <!--开启本mapper的namespace下的二级缓存-->
+    <!--type：指定cache接口的实现类，mybatis默认使用PerpetualCache。-->
+    <!--要好ehcache整合，需要配置type为ehcache实现cache接口的类型-->
+    <cache type=""></cache>
+
     <!-- 在 映射文件中配置很多sql语句 -->
     <!-- 需求：通过id查询用户表的记录 -->
     <!-- 通过 select执行数据库查询

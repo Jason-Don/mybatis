@@ -1,16 +1,30 @@
 package cn.com.itcast.mybatis.demo01.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * user pojos
  */
-public class User {
+public class User implements Serializable{
     private int id;
     private String username;
     private String sex;
     private Date birthday;
     private String address;
+
+    private List<Orders> ordersList;
+
+
+
+    public List<Orders> getOrdersList() {
+        return ordersList;
+    }
+
+    public void setOrdersList(List<Orders> ordersList) {
+        this.ordersList = ordersList;
+    }
 
     public void setId(int id) {
         this.id = id;

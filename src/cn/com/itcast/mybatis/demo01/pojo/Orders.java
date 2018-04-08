@@ -1,6 +1,7 @@
 package cn.com.itcast.mybatis.demo01.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 public class Orders {
     private int id;
@@ -9,6 +10,29 @@ public class Orders {
     private Date createtime;
     private String note;
     private User user;
+
+    private List<OrderDetail> orderDetails;
+
+    @Override
+    public String toString() {
+        return "Orders{" +
+                "id=" + id +
+                ", user_id=" + user_id +
+                ", number='" + number + '\'' +
+                ", createtime=" + createtime +
+                ", note='" + note + '\'' +
+                ", user=" + user +
+                ", orderDetails=" + orderDetails +
+                '}';
+    }
+
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
 
     public User getUser() {
         return user;
@@ -58,15 +82,4 @@ public class Orders {
         this.note = note;
     }
 
-    @Override
-    public String toString() {
-        return "Orders{" +
-                "id=" + id +
-                ", user_id=" + user_id +
-                ", number='" + number + '\'' +
-                ", createtime=" + createtime +
-                ", note='" + note + '\'' +
-                ", user=" + user +
-                '}';
-    }
 }
